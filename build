@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo "Image name:"
+read image
+
+docker build --tag=$image .

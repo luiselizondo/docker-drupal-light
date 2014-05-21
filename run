@@ -1,0 +1,20 @@
+#!/bin/bash
+
+echo "Port to use for web server:"
+read port
+
+echo "Image name to use:"
+read image
+
+echo "Name for the container:"
+read name
+
+echo "Location of application files:"
+read application
+
+echo "Location of database files:"
+read database
+
+echo "Running container"
+echo "docker run -p $port:80 –p 49801:6081 -v $application:/var/www -v $database:/var/lib/mysql --name $name $image"
+
