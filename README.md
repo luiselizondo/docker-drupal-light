@@ -1,51 +1,32 @@
-docker-drupal
+docker-drupal-light
 =============
 
-Full stack consisting of Varnish, Apache, Drupal, Memcache, and MySql.
+Light stack consisting of Nginx, PHP, MySQL and Drupal.
 
-Requirements:
-Vagrant, Git
-
-Install Docker
+### Build
 ```bash
-git clone https://github.com/dotcloud/docker.git
+docker build -t="somename" .
 ```
 
-Enable Port Forwarding
-```bash
-export FORWARD_DOCKER_PORTS=1
+### Run
+There are three ways to run it:
+
+1. Using fig. There's a fig.yml file that can help you get started.
+2. Using run which will ask you for some input to build the docker command for you
+3. Using the docker command:
+
+```
+docker run -d -p 8000:80 -p 3306:3306 --volumes-from=SOMEVOLUME -v /var/www/mydrupalwebsite:/var/www -v /var/log/docker:/var/log/supervisor --name container_name image_name
 ```
 
-Start VM
-```bash
-cd docker
-vagrant up
-vagrant ssh
-sudo -i
+If you don't want to expose the MySQL port, you can safetly remove it.
+
+After a few seconds you need to do 
+
+```
+docker logs containerid
 ```
 
-Install Git inside VM
-```bash
-apt-get install git -y
-```
+To retrieve the MySQL information that was used.
 
-Get My Dockerfile
-```bash
-git clone https://github.com/mingfang/docker-drupal.git
-cd docker-drupal
-```
-
-Build
-```bash
-docker build -t="drupal" .
-```
-
-Run
-```bash
-docker run -p 49800:80 -p 49801:6081 drupal
-```
-
-Point your browser to http://localhost:49801
-
-Admin login is admin/admin
-
+Point your browser to http://localhost:8000

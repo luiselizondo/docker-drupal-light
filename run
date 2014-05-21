@@ -1,20 +1,52 @@
 #!/bin/bash
 
-echo "Port to use for web server:"
-read port
+echo "########### CURRENT IMAGES ################"
+docker images | grep latest
+echo "###########################################"
+echo ""
+read -p "Image name to use: " image
+read -p "Location of application files: " application
+read -p "Port to use for web server: (8000) " port
+port=${port:-8000}
 
-echo "Image name to use:"
-read image
+read -p "Name for the container: (Random) " name
+name=${name:-$RANDOM}
 
-echo "Name for the container:"
-read name
+echo "########### CURRENT VOLUMES ###############"
+docker ps -a | grep busybox
+echo "###########################################"
+echo ""
+read -p "Volume with MySQL Data: " volumesfrom
 
-echo "Location of application files:"
-read application
+read -p "Do you want to expose MySQL? (Y/n) " exposeMySQL
 
-echo "Location of database files:"
-read database
+iam=whoami
+LOGS=~/logs/docker/$name
+# Create the logs directory always in home 
+mkdir -p $LOGS
 
-echo "Running container"
-echo "docker run -p $port:80 –p 49801:6081 -v $application:/var/www -v $database:/var/lib/mysql --name $name $image"
+if [[ $exposeMySQL == "Y" || $exposeMySQL == "y" || $exposeMySQL = "" ]]; then
+	read -p "Port to expose MySQL: (Random) " mysqlport
+	mysqlport=${mysqlport:-$RANDOM}
 
+	echo ""
+	echo "Starting the container, this can take a few seconds, please wait..."
+	echo ""
+	docker run -d -p $port:80 -p $mysqlport:3306 --volumes-from=$volumesfrom -v $application:/var/www -v $LOGS:/var/log/supervisor --name $name $image
+else 
+	echo ""
+	echo "Starting the container, this can take a few seconds, please wait..."
+	echo ""
+	docker run -d -p $port:80 --volumes-from=$volumesfrom -v $application:/var/www -v ~/logs/docker/$name:/var/log/supervisor --name $name $image
+fi
+
+echo "Running $image"
+echo "Container name: $name"
+
+if [[ $exposeMySQL == "Y" || $exposeMySQL == "y" || $exposeMySQL = "" ]]; then
+	echo "MySQL Port: $mysqlport"
+fi
+
+echo "List supervisor logs with ls $LOGS"
+echo "To see the MySQL information, wait a few seconds and then do docker logs $name"
+echo "Done. Access the server on http://localhost:$port"

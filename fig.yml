@@ -1,0 +1,11 @@
+# This is an example of a fig.yml file that you can use to boot this container, you need to personalize it before you use it
+ image: myname/drupal-light
+ ports:
+  - 8000:80
+  - 3307:3306
+ volumes:
+  - "/var/www:/var/www"
+  - "/var/log/docker:/var/log/supervisor"
+ volumes_from:
+  - MYSQL_DATA
+ 
