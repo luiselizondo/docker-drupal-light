@@ -1,4 +1,5 @@
 # This is an example of a fig.yml file that you can use to boot this container, you need to personalize it before you use it
+web:
  image: myname/drupal-light
  ports:
   - 8000:80
